@@ -12,29 +12,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void addCourseCard(CourseProvider courseProvider) {
-    int index = courseProvider.courses.length;
-    print(index);
-    setState(() {
-      courseProvider.courses.add(
-        CourseOptionsCard(
-          index: index,
-        ),
-      );
-    });
-  }
-
-  void removeCourseCard(CourseProvider courseProvider, int index) {
-    setState(
-      () {
-        courseProvider.courses.removeAt(index);
-      },
-    );
+  Future<void> loadCourses(CourseProvider courseProvider) async {
+    await courseProvider.readCourses();
   }
 
   @override
   Widget build(BuildContext context) {
     final courseProvider = Provider.of<CourseProvider>(context);
+    loadCourses(courseProvider);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -67,19 +52,23 @@ class _HomePageState extends State<HomePage> {
                 itemCount: courseProvider.courses.length + 1,
                 itemBuilder: (BuildContext context, int index) {
                   if (index < courseProvider.courses.length) {
-                    return courseProvider.courses[index];
+                    return CourseOptionsCard(
+                      index: index,
+                      courseData: courseProvider.courses[index],
+                    );
                   }
                   return SizedBox(
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        Course? last = courseProvider
-                            .courses[courseProvider.courses.length - 1]
-                            .courseData;
-                        if (last != null &&
-                            last.hours != 0 &&
-                            last.grade != "") {
-                          addCourseCard(courseProvider);
+                        if (courseProvider.courses.isEmpty ||
+                            courseProvider.courses.last.grade != '') {
+                          courseProvider.addCourse(Course(grade: '', hours: 0));
+                          CourseOptionsCard(
+                            index: index,
+                            courseData: courseProvider.courses.last,
+                          );
+                          setState(() {});
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(

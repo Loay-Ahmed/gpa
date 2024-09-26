@@ -13,8 +13,6 @@ class CourseOptionsCard extends StatefulWidget {
   final Course? courseData;
   final int index;
 
-  // final void Function(CourseProvider, int) homeDeleteFunction;
-
   @override
   State<CourseOptionsCard> createState() => _CourseOptionsCardState();
 }
@@ -41,12 +39,14 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
   String? selectedHours;
 
   void deleteCard(CourseProvider courseProvider) {
-    // widget.homeDeleteFunction(courseProvider, widget.index);
+    courseProvider.deleteCourse(widget.index);
   }
 
   @override
   Widget build(BuildContext context) {
     controller1.text = widget.courseData != null ? widget.courseData!.name : "";
+    selectedGrade = widget.courseData?.grade;
+    selectedHours = widget.courseData?.hours.toString();
     final courseProvider = Provider.of<CourseProvider>(context);
     return Container(
       decoration: const BoxDecoration(
@@ -66,6 +66,19 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                 width: 240,
                 child: TextFormField(
                   controller: controller1,
+                  onChanged: (name) {
+                    courseProvider.updateCourse(
+                        Course(
+                          name: name,
+                          grade: widget.courseData != null
+                              ? widget.courseData!.grade
+                              : "",
+                          hours: widget.courseData != null
+                              ? widget.courseData!.hours
+                              : 0,
+                        ),
+                        widget.index);
+                  },
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
@@ -113,6 +126,15 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedGrade = newValue;
+
+                      courseProvider.updateCourse(
+                          Course(
+                            grade: selectedGrade!,
+                            hours: widget.courseData != null
+                                ? widget.courseData!.hours
+                                : 0,
+                          ),
+                          widget.index);
                     });
                   },
                   items:
@@ -129,6 +151,14 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedHours = newValue;
+                      courseProvider.updateCourse(
+                          Course(
+                            grade: widget.courseData != null
+                                ? widget.courseData!.grade
+                                : "",
+                            hours: int.parse(selectedHours!),
+                          ),
+                          widget.index);
                     });
                   },
                   items: hours.map<DropdownMenuItem<String>>((int value) {
