@@ -1,6 +1,8 @@
+import 'package:gpa/models/grades.dart';
+
 class Course {
   String name = "";
-  String grade = "";
+  Grade grade = Grade.F;
   int hours = 0;
 
   Course({this.name = "", required this.grade, required this.hours});

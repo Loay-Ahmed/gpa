@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gpa/models/course.dart';
+import 'package:gpa/models/grades.dart';
 import 'package:gpa/providers/course_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -21,16 +22,16 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
   final controller1 = TextEditingController();
 
   // The list and the option chosen for the grade drop down
-  Map<String, double> grades = {
-    'A+': 4,
-    'A': 3.7,
-    'B+': 3.3,
-    'B': 3,
-    'C+': 2.7,
-    'C': 2.4,
-    'D+': 2.2,
-    'D': 2,
-    'F': 0,
+  Map<String, Grade> grades = {
+    'A+': Grade.Ap,
+    'A': Grade.A,
+    'B+': Grade.Bp,
+    'B': Grade.B,
+    'C+': Grade.Cp,
+    'C': Grade.C,
+    'D+': Grade.Dp,
+    'D': Grade.D,
+    'F': Grade.F
   };
   String? selectedGrade;
 
@@ -45,7 +46,7 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
   @override
   Widget build(BuildContext context) {
     controller1.text = widget.courseData != null ? widget.courseData!.name : "";
-    selectedGrade = widget.courseData?.grade;
+    selectedGrade = widget.courseData?.grade.name;
     selectedHours = widget.courseData?.hours.toString();
     final courseProvider = Provider.of<CourseProvider>(context);
     return Container(
@@ -72,7 +73,7 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                           name: name,
                           grade: widget.courseData != null
                               ? widget.courseData!.grade
-                              : "",
+                              : Grade.F,
                           hours: widget.courseData != null
                               ? widget.courseData!.hours
                               : 0,
@@ -129,7 +130,7 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
 
                       courseProvider.updateCourse(
                           Course(
-                            grade: selectedGrade!,
+                            grade: grades[selectedGrade!]!,
                             hours: widget.courseData != null
                                 ? widget.courseData!.hours
                                 : 0,
@@ -155,7 +156,7 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                           Course(
                             grade: widget.courseData != null
                                 ? widget.courseData!.grade
-                                : "",
+                                : Grade.notSelected,
                             hours: int.parse(selectedHours!),
                           ),
                           widget.index);

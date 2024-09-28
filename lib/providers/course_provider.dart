@@ -30,7 +30,7 @@ class CourseProvider extends ChangeNotifier {
     //   }
     // }
     final prefs = await SharedPreferences.getInstance();
-    var jsonData =  await prefs.getString('courses');
+    var jsonData =  prefs.getString('courses');
     var json = jsonDecode(jsonData ?? "{}") as Map<String, dynamic>;
     List<Course> prefsData = [];
 

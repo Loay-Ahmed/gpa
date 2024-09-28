@@ -3,6 +3,7 @@ import 'package:gpa/models/course.dart';
 import 'package:gpa/providers/course_provider.dart';
 import 'package:gpa/widgets/course_options.dart';
 import 'package:provider/provider.dart';
+import 'package:gpa/models/grades.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,6 +17,21 @@ class _HomePageState extends State<HomePage> {
     await courseProvider.readCourses();
   }
 
+  double gpa = 0;
+
+  double calculateGPA(CourseProvider courseProvider) {
+    double totalCreditHours = 0;
+    double totalGradePoints = 0;
+    for (var course in courseProvider.courses) {
+      if (course.grade == Grade.notSelected) {
+        continue;
+      }
+      totalCreditHours += course.hours;
+      totalGradePoints += course.grade.points * course.hours;
+    }
+    return totalGradePoints / totalCreditHours;
+  }
+
   @override
   Widget build(BuildContext context) {
     final courseProvider = Provider.of<CourseProvider>(context);
@@ -23,17 +39,17 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Row(
+        title: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text(
+            const Text(
               "GPA",
               style: TextStyle(fontSize: 30),
             ),
             Text(
-              "3.29",
-              style: TextStyle(fontSize: 30),
+              gpa.toString(),
+              style: const TextStyle(fontSize: 30),
             )
           ],
         ),
@@ -62,13 +78,15 @@ class _HomePageState extends State<HomePage> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (courseProvider.courses.isEmpty ||
-                            courseProvider.courses.last.grade != '') {
-                          courseProvider.addCourse(Course(grade: '', hours: 0));
+                            courseProvider.courses.last.grade != Grade.notSelected) {
+                          courseProvider.addCourse(Course(grade: Grade.F, hours: 0));
                           CourseOptionsCard(
                             index: index,
                             courseData: courseProvider.courses.last,
                           );
-                          setState(() {});
+                          setState(() {
+                            gpa = calculateGPA(courseProvider);
+                          });
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
