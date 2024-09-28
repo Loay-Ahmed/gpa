@@ -33,7 +33,7 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
     'D': Grade.D,
     'F': Grade.F
   };
-  String? selectedGrade;
+  String? selectedGrade = "F";
 
   // The list and the option chosen for the hours drop down
   List<int> hours = [0, 1, 2, 3];
@@ -45,9 +45,9 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
 
   @override
   Widget build(BuildContext context) {
-    controller1.text = widget.courseData != null ? widget.courseData!.name : "";
-    selectedGrade = widget.courseData?.grade.name;
-    selectedHours = widget.courseData?.hours.toString();
+    controller1.text =  widget.courseData?.name ?? "";
+    selectedGrade = widget.courseData?.grade.name ?? Grade.notSelected.name;
+    selectedHours = widget.courseData?.hours.toString() ?? "0";
     final courseProvider = Provider.of<CourseProvider>(context);
     return Container(
       decoration: const BoxDecoration(
@@ -71,12 +71,8 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                     courseProvider.updateCourse(
                         Course(
                           name: name,
-                          grade: widget.courseData != null
-                              ? widget.courseData!.grade
-                              : Grade.F,
-                          hours: widget.courseData != null
-                              ? widget.courseData!.hours
-                              : 0,
+                          grade: widget.courseData?.grade ?? Grade.F,
+                          hours: widget.courseData?.hours ?? 0,
                         ),
                         widget.index);
                   },
@@ -84,7 +80,7 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
                   ),
-                  cursorColor: Colors.white,
+                  cursorColor: const Color.fromRGBO(255, 255, 255, 1),
                   decoration: const InputDecoration(
                     fillColor: Colors.black54,
                     focusedBorder: InputBorder.none,
@@ -127,13 +123,10 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedGrade = newValue;
-
                       courseProvider.updateCourse(
                           Course(
                             grade: grades[selectedGrade!]!,
-                            hours: widget.courseData != null
-                                ? widget.courseData!.hours
-                                : 0,
+                            hours: widget.courseData?.hours ?? 0,
                           ),
                           widget.index);
                     });
@@ -154,9 +147,7 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                       selectedHours = newValue;
                       courseProvider.updateCourse(
                           Course(
-                            grade: widget.courseData != null
-                                ? widget.courseData!.grade
-                                : Grade.notSelected,
+                            grade: widget.courseData?.grade ?? Grade.notSelected,
                             hours: int.parse(selectedHours!),
                           ),
                           widget.index);

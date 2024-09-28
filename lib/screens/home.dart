@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gpa/models/course.dart';
+import 'package:gpa/models/gpa_calculator.dart';
 import 'package:gpa/providers/course_provider.dart';
 import 'package:gpa/widgets/course_options.dart';
 import 'package:provider/provider.dart';
@@ -17,20 +18,6 @@ class _HomePageState extends State<HomePage> {
     await courseProvider.readCourses();
   }
 
-  double gpa = 0;
-
-  double calculateGPA(CourseProvider courseProvider) {
-    double totalCreditHours = 0;
-    double totalGradePoints = 0;
-    for (var course in courseProvider.courses) {
-      if (course.grade == Grade.notSelected) {
-        continue;
-      }
-      totalCreditHours += course.hours;
-      totalGradePoints += course.grade.points * course.hours;
-    }
-    return totalGradePoints / totalCreditHours;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +35,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(fontSize: 30),
             ),
             Text(
-              gpa.toString(),
+              GPACalculator(courseProvider: courseProvider).calculate().toString(),
               style: const TextStyle(fontSize: 30),
             )
           ],
@@ -79,14 +66,12 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () {
                         if (courseProvider.courses.isEmpty ||
                             courseProvider.courses.last.grade != Grade.notSelected) {
-                          courseProvider.addCourse(Course(grade: Grade.F, hours: 0));
+                          courseProvider.addCourse(Course(grade: Grade.notSelected, hours: 0));
                           CourseOptionsCard(
                             index: index,
                             courseData: courseProvider.courses.last,
                           );
-                          setState(() {
-                            gpa = calculateGPA(courseProvider);
-                          });
+                          setState((){});
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
