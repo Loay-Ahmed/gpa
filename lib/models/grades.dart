@@ -42,4 +42,19 @@ extension GradesExtension on Grade{
       case Grade.notSelected: return 0;
     }
   }
+
+}
+Grade fromNameToGrade(String name){
+  switch(name){
+    case "A+": return Grade.Ap;
+    case "A": return Grade.A;
+    case "B+": return Grade.Bp;
+    case "B": return Grade.B;
+    case "C+": return Grade.Cp;
+    case "C": return Grade.C;
+    case "D+": return Grade.Dp;
+    case "D": return Grade.D;
+    case "F": return Grade.F;
+  }
+  return Grade.notSelected;
 }

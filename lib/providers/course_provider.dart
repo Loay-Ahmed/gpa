@@ -29,18 +29,18 @@ class CourseProvider extends ChangeNotifier {
     //     break;
     //   }
     // }
-    final prefs = await SharedPreferences.getInstance();
-    var jsonData =  prefs.getString('courses');
+    final pref = await SharedPreferences.getInstance();
+    var jsonData =  pref.getString('courses');
     var json = jsonDecode(jsonData ?? "{}") as Map<String, dynamic>;
-    List<Course> prefsData = [];
+    List<Course> prefData = [];
 
     for (Map<String, dynamic> item in json.values) {
-      prefsData.add(Course.fromJSON(json: item));
+      prefData.add(Course.fromJSON(json: item));
     }
-    for (var item in prefsData) {
-      if (!courses.contains(item) || prefsData.length != courses.length) {
+    for (var item in prefData) {
+      if (!courses.contains(item) || prefData.length != courses.length) {
         courses.clear();
-        courses = prefsData;
+        courses = prefData;
         notifyListeners();
         break;
       }

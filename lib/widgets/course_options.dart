@@ -19,7 +19,7 @@ class CourseOptionsCard extends StatefulWidget {
 }
 
 class _CourseOptionsCardState extends State<CourseOptionsCard> {
-  final controller1 = TextEditingController();
+  final controller = TextEditingController();
 
   // The list and the option chosen for the grade drop down
   Map<String, Grade> grades = {
@@ -45,7 +45,7 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
 
   @override
   Widget build(BuildContext context) {
-    controller1.text =  widget.courseData?.name ?? "";
+    controller.text = widget.courseData?.name ?? "";
     selectedGrade = widget.courseData?.grade.name ?? Grade.notSelected.name;
     selectedHours = widget.courseData?.hours.toString() ?? "0";
     final courseProvider = Provider.of<CourseProvider>(context);
@@ -66,7 +66,7 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
               SizedBox(
                 width: 240,
                 child: TextFormField(
-                  controller: controller1,
+                  controller: controller,
                   onChanged: (name) {
                     courseProvider.updateCourse(
                         Course(

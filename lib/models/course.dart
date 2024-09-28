@@ -9,7 +9,7 @@ class Course {
 
   Course.fromJSON({required Map<String, dynamic> json}) {
     name = json['name'];
-    grade = json['grade'];
+    grade = fromNameToGrade(json['grade']);
     hours = json['hours'];
   }
 
