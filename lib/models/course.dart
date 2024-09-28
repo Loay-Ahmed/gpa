@@ -16,7 +16,7 @@ class Course {
   Map<String, dynamic> courseToJSON() {
     return {
       "name": name,
-      "grade": grade,
+      "grade": grade.name,
       "hours": hours,
     };
   }

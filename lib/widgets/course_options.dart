@@ -46,9 +46,10 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
   @override
   Widget build(BuildContext context) {
     controller.text = widget.courseData?.name ?? "";
-    selectedGrade = widget.courseData?.grade.name ?? Grade.notSelected.name;
+    selectedGrade = widget.courseData?.grade.name ?? "F";
     selectedHours = widget.courseData?.hours.toString() ?? "0";
     final courseProvider = Provider.of<CourseProvider>(context);
+
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(
@@ -124,20 +125,25 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                     setState(() {
                       selectedGrade = newValue;
                       courseProvider.updateCourse(
-                          Course(
-                            grade: grades[selectedGrade!]!,
-                            hours: widget.courseData?.hours ?? 0,
-                          ),
-                          widget.index);
+                        Course(
+                          grade: grades[selectedGrade!]!,
+                          hours: widget.courseData?.hours ?? 0,
+                        ),
+                        widget.index,
+                      );
                     });
                   },
-                  items:
-                      grades.keys.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                  items: [
+                    DropdownMenuItem(
+                        value: grades.keys.toList()[0],
+                        child: Text(grades.keys.toList()[0])),
+                    DropdownMenuItem(
+                        value: grades.keys.toList()[1],
+                        child: Text(grades.keys.toList()[1])),
+                    DropdownMenuItem(
+                        value: grades.keys.toList()[2],
+                        child: Text(grades.keys.toList()[2])),
+                  ],
                 ),
                 DropdownButton<String>(
                   value: selectedHours,
@@ -147,7 +153,8 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                       selectedHours = newValue;
                       courseProvider.updateCourse(
                           Course(
-                            grade: widget.courseData?.grade ?? Grade.notSelected,
+                            grade:
+                                widget.courseData?.grade ?? Grade.notSelected,
                             hours: int.parse(selectedHours!),
                           ),
                           widget.index);

@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:gpa/models/course.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/grades.dart';
+
 class CourseProvider extends ChangeNotifier {
-  List<Course> courses = [];
+  List<Course> courses = [Course(grade: Grade.notSelected, hours: 0)];
 
   Future<void> addCourse(Course course) async {
     courses.add(course);
@@ -14,23 +16,8 @@ class CourseProvider extends ChangeNotifier {
   }
 
   Future<void> readCourses() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // var data = await prefs.getString('alarms');
-    // var decodedData = jsonDecode(data ?? "{}") as Map<String, dynamic>;
-    // List<Alarm> alarmsPrefs = [];
-    // for (Map<String, dynamic> alarmJson in decodedData.values) {
-    //   alarmsPrefs.add(Alarm.fromJSON(alarmJson));
-    // }
-    // for (var item in alarms) {
-    //   if (!alarmsPrefs.contains(item)) {
-    //     alarms.clear();
-    //     alarms = alarmsPrefs;
-    //     notifyListeners();
-    //     break;
-    //   }
-    // }
     final pref = await SharedPreferences.getInstance();
-    var jsonData =  pref.getString('courses');
+    var jsonData = pref.getString('courses');
     var json = jsonDecode(jsonData ?? "{}") as Map<String, dynamic>;
     List<Course> prefData = [];
 
@@ -38,13 +25,16 @@ class CourseProvider extends ChangeNotifier {
       prefData.add(Course.fromJSON(json: item));
     }
     for (var item in prefData) {
-      if (!courses.contains(item) || prefData.length != courses.length) {
+      if (courses.contains(item) || prefData.length != courses.length) {
         courses.clear();
         courses = prefData;
         notifyListeners();
         break;
       }
     }
+    courses.forEach((item) => print(
+          item.grade,
+        ));
   }
 
   Future<void> updateCourse(Course course, int index) async {
