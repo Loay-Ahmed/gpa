@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gpa/models/course.dart';
 import 'package:gpa/models/gpa_calculator.dart';
+import 'package:gpa/models/grades.dart';
 import 'package:gpa/providers/course_provider.dart';
 import 'package:gpa/widgets/course_options.dart';
 import 'package:provider/provider.dart';
-import 'package:gpa/models/grades.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,7 +17,6 @@ class _HomePageState extends State<HomePage> {
   Future<void> loadCourses(CourseProvider courseProvider) async {
     await courseProvider.readCourses();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +34,9 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(fontSize: 30),
             ),
             Text(
-              GPACalculator(courseProvider: courseProvider).calculate().toString(),
+              GPACalculator(courseProvider: courseProvider)
+                  .calculate()
+                  .toStringAsFixed(2),
               style: const TextStyle(fontSize: 30),
             )
           ],

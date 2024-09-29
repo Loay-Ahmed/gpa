@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:gpa/models/course.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/grades.dart';
+
 class CourseProvider extends ChangeNotifier {
-  List<Course> courses = [];
+  List<Course> courses = [Course(grade: Grade.notSelected, hours: 0)];
 
   Future<void> addCourse(Course course) async {
     courses.add(course);
@@ -45,6 +47,9 @@ class CourseProvider extends ChangeNotifier {
         break;
       }
     }
+    courses.forEach((item) => print(
+          item.grade,
+        ));
   }
 
   Future<void> updateCourse(Course course, int index) async {
