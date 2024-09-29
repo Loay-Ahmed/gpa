@@ -64,38 +64,12 @@ class _HomePageState extends State<HomePage> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (courseProvider.courses.isEmpty ||
-                            courseProvider.courses.last.grade != Grade.notSelected) {
-                          courseProvider.addCourse(Course(grade: Grade.notSelected, hours: 0));
-                          CourseOptionsCard(
-                            index: index,
-                            courseData: courseProvider.courses.last,
-                          );
-                          setState((){});
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text(
-                                "Fill all fields",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              backgroundColor: const Color(0xff191c20),
-                              width: MediaQuery.sizeOf(context).width - 100,
-                              elevation: 1,
-                              behavior: SnackBarBehavior.floating,
-                              duration: const Duration(seconds: 2),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 100,
-                                vertical: 15,
-                              ),
-                            ),
-                          );
-                        }
+                        courseProvider.addCourse(Course(grade: Grade.notSelected, hours: 0));
+                        CourseOptionsCard(
+                          index: index,
+                          courseData: courseProvider.courses.last,
+                        );
+                        setState((){});
                       },
                       style: ElevatedButton.styleFrom(
                         elevation: 0,

@@ -2,7 +2,7 @@ import 'package:gpa/models/grades.dart';
 
 class Course {
   String name = "";
-  Grade grade = Grade.F;
+  Grade grade = Grade.notSelected;
   int hours = 0;
 
   Course({this.name = "", required this.grade, required this.hours});

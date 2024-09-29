@@ -14,8 +14,8 @@ class CourseProvider extends ChangeNotifier {
   }
 
   Future<void> readCourses() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // var data = await prefs.getString('alarms');
+    // final sharedPrefs = await SharedPreferences.getInstance();
+    // var data = await sharedPrefs.getString('alarms');
     // var decodedData = jsonDecode(data ?? "{}") as Map<String, dynamic>;
     // List<Alarm> alarmsPrefs = [];
     // for (Map<String, dynamic> alarmJson in decodedData.values) {
@@ -29,18 +29,18 @@ class CourseProvider extends ChangeNotifier {
     //     break;
     //   }
     // }
-    final pref = await SharedPreferences.getInstance();
-    var jsonData =  pref.getString('courses');
+    final sharedPref = await SharedPreferences.getInstance();
+    var jsonData =  sharedPref.getString('courses');
     var json = jsonDecode(jsonData ?? "{}") as Map<String, dynamic>;
-    List<Course> prefData = [];
+    List<Course> sharedPrefData = [];
 
     for (Map<String, dynamic> item in json.values) {
-      prefData.add(Course.fromJSON(json: item));
+      sharedPrefData.add(Course.fromJSON(json: item));
     }
-    for (var item in prefData) {
-      if (!courses.contains(item) || prefData.length != courses.length) {
+    for (var item in sharedPrefData) {
+      if (!courses.contains(item) || sharedPrefData.length != courses.length) {
         courses.clear();
-        courses = prefData;
+        courses = sharedPrefData;
         notifyListeners();
         break;
       }
@@ -60,11 +60,11 @@ class CourseProvider extends ChangeNotifier {
   }
 
   Future<void> updatePreferences() async {
-    final prefs = await SharedPreferences.getInstance();
+    final sharedPref = await SharedPreferences.getInstance();
     Map<String, dynamic> map = {};
     for (int i = 0; i < courses.length; i++) {
       map['$i'] = courses[i].courseToJSON();
     }
-    await prefs.setString('courses', jsonEncode(map));
+    await sharedPref.setString('courses', jsonEncode(map));
   }
 }

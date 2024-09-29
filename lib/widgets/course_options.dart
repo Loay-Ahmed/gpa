@@ -23,15 +23,16 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
 
   // The list and the option chosen for the grade drop down
   Map<String, Grade> grades = {
-    'A+': Grade.Ap,
-    'A': Grade.A,
-    'B+': Grade.Bp,
-    'B': Grade.B,
-    'C+': Grade.Cp,
-    'C': Grade.C,
-    'D+': Grade.Dp,
-    'D': Grade.D,
-    'F': Grade.F
+    "A+": Grade.Ap,
+    "A": Grade.A,
+    "B+": Grade.Bp,
+    "B": Grade.B,
+    "C+": Grade.Cp,
+    "C": Grade.C,
+    "D+": Grade.Dp,
+    "D": Grade.D,
+    "F": Grade.F,
+    "" : Grade.notSelected,
   };
   String? selectedGrade = "F";
 
@@ -91,7 +92,9 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
               ),
               GestureDetector(
                 onTap: () {
-                  deleteCard(courseProvider);
+                  setState(() {
+                    deleteCard(courseProvider);
+                  });
                 },
                 child: Container(
                   width: 50,
@@ -118,14 +121,14 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 DropdownButton<String>(
-                  value: selectedGrade,
+                  value: selectedGrade ?? "",
                   hint: const Text('Grade'),
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedGrade = newValue;
                       courseProvider.updateCourse(
                           Course(
-                            grade: grades[selectedGrade!]!,
+                            grade: grades[selectedGrade ?? ""] ?? Grade.notSelected,
                             hours: widget.courseData?.hours ?? 0,
                           ),
                           widget.index);
