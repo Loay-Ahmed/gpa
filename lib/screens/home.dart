@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gpa/models/course.dart';
+import 'package:gpa/models/gpa_calculator.dart';
+import 'package:gpa/models/grades.dart';
 import 'package:gpa/providers/course_provider.dart';
 import 'package:gpa/widgets/course_options.dart';
 import 'package:provider/provider.dart';
@@ -23,17 +25,19 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Row(
+        title: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text(
+            const Text(
               "GPA",
               style: TextStyle(fontSize: 30),
             ),
             Text(
-              "3.29",
-              style: TextStyle(fontSize: 30),
+              GPACalculator(courseProvider: courseProvider)
+                  .calculate()
+                  .toStringAsFixed(2),
+              style: const TextStyle(fontSize: 30),
             )
           ],
         ),
@@ -61,38 +65,12 @@ class _HomePageState extends State<HomePage> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (courseProvider.courses.isEmpty ||
-                            courseProvider.courses.last.grade != '') {
-                          courseProvider.addCourse(Course(grade: '', hours: 0));
-                          CourseOptionsCard(
-                            index: index,
-                            courseData: courseProvider.courses.last,
-                          );
-                          setState(() {});
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text(
-                                "Fill all fields",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              backgroundColor: const Color(0xff191c20),
-                              width: MediaQuery.sizeOf(context).width - 100,
-                              elevation: 1,
-                              behavior: SnackBarBehavior.floating,
-                              duration: const Duration(seconds: 2),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 100,
-                                vertical: 15,
-                              ),
-                            ),
-                          );
-                        }
+                        courseProvider.addCourse(Course(grade: Grade.notSelected, hours: 0));
+                        CourseOptionsCard(
+                          index: index,
+                          courseData: courseProvider.courses.last,
+                        );
+                        setState((){});
                       },
                       style: ElevatedButton.styleFrom(
                         elevation: 0,

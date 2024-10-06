@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gpa/models/course.dart';
+import 'package:gpa/models/grades.dart';
 import 'package:gpa/providers/course_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -18,21 +19,22 @@ class CourseOptionsCard extends StatefulWidget {
 }
 
 class _CourseOptionsCardState extends State<CourseOptionsCard> {
-  final controller1 = TextEditingController();
+  final controller = TextEditingController();
 
   // The list and the option chosen for the grade drop down
-  Map<String, double> grades = {
-    'A+': 4,
-    'A': 3.7,
-    'B+': 3.3,
-    'B': 3,
-    'C+': 2.7,
-    'C': 2.4,
-    'D+': 2.2,
-    'D': 2,
-    'F': 0,
+  Map<String, Grade> grades = {
+    "A+": Grade.Ap,
+    "A": Grade.A,
+    "B+": Grade.Bp,
+    "B": Grade.B,
+    "C+": Grade.Cp,
+    "C": Grade.C,
+    "D+": Grade.Dp,
+    "D": Grade.D,
+    "F": Grade.F,
+    "" : Grade.notSelected,
   };
-  String? selectedGrade;
+  String? selectedGrade = "F";
 
   // The list and the option chosen for the hours drop down
   List<int> hours = [0, 1, 2, 3];
@@ -44,10 +46,11 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
 
   @override
   Widget build(BuildContext context) {
-    controller1.text = widget.courseData != null ? widget.courseData!.name : "";
-    selectedGrade = widget.courseData?.grade;
-    selectedHours = widget.courseData?.hours.toString();
+    controller.text = widget.courseData?.name ?? "";
+    selectedGrade = widget.courseData?.grade.name ?? "F";
+    selectedHours = widget.courseData?.hours.toString() ?? "0";
     final courseProvider = Provider.of<CourseProvider>(context);
+
     return Container(
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.all(
@@ -65,17 +68,13 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
               SizedBox(
                 width: 240,
                 child: TextFormField(
-                  controller: controller1,
+                  controller: controller,
                   onChanged: (name) {
                     courseProvider.updateCourse(
                         Course(
                           name: name,
-                          grade: widget.courseData != null
-                              ? widget.courseData!.grade
-                              : "",
-                          hours: widget.courseData != null
-                              ? widget.courseData!.hours
-                              : 0,
+                          grade: widget.courseData?.grade ?? Grade.F,
+                          hours: widget.courseData?.hours ?? 0,
                         ),
                         widget.index);
                   },
@@ -83,7 +82,7 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
                   ),
-                  cursorColor: Colors.white,
+                  cursorColor: const Color.fromRGBO(255, 255, 255, 1),
                   decoration: const InputDecoration(
                     fillColor: Colors.black54,
                     focusedBorder: InputBorder.none,
@@ -94,7 +93,9 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
               ),
               GestureDetector(
                 onTap: () {
-                  deleteCard(courseProvider);
+                  setState(() {
+                    deleteCard(courseProvider);
+                  });
                 },
                 child: Container(
                   width: 50,
@@ -121,29 +122,30 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 DropdownButton<String>(
-                  value: selectedGrade,
+                  value: selectedGrade ?? "",
                   hint: const Text('Grade'),
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedGrade = newValue;
-
                       courseProvider.updateCourse(
                           Course(
-                            grade: selectedGrade!,
-                            hours: widget.courseData != null
-                                ? widget.courseData!.hours
-                                : 0,
+                            grade: grades[selectedGrade ?? ""] ?? Grade.notSelected,
+                            hours: widget.courseData?.hours ?? 0,
                           ),
                           widget.index);
                     });
                   },
-                  items:
-                      grades.keys.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                  items: [
+                    DropdownMenuItem(
+                        value: grades.keys.toList()[0],
+                        child: Text(grades.keys.toList()[0])),
+                    DropdownMenuItem(
+                        value: grades.keys.toList()[1],
+                        child: Text(grades.keys.toList()[1])),
+                    DropdownMenuItem(
+                        value: grades.keys.toList()[2],
+                        child: Text(grades.keys.toList()[2])),
+                  ],
                 ),
                 DropdownButton<String>(
                   value: selectedHours,
@@ -153,9 +155,8 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
                       selectedHours = newValue;
                       courseProvider.updateCourse(
                           Course(
-                            grade: widget.courseData != null
-                                ? widget.courseData!.grade
-                                : "",
+                            grade:
+                                widget.courseData?.grade ?? Grade.notSelected,
                             hours: int.parse(selectedHours!),
                           ),
                           widget.index);

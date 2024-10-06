@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:gpa/models/course.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/grades.dart';
+
 class CourseProvider extends ChangeNotifier {
-  List<Course> courses = [];
+  List<Course> courses = [Course(grade: Grade.notSelected, hours: 0)];
 
   Future<void> addCourse(Course course) async {
     courses.add(course);
@@ -14,8 +16,8 @@ class CourseProvider extends ChangeNotifier {
   }
 
   Future<void> readCourses() async {
-    // final prefs = await SharedPreferences.getInstance();
-    // var data = await prefs.getString('alarms');
+    // final sharedPrefs = await SharedPreferences.getInstance();
+    // var data = await sharedPrefs.getString('alarms');
     // var decodedData = jsonDecode(data ?? "{}") as Map<String, dynamic>;
     // List<Alarm> alarmsPrefs = [];
     // for (Map<String, dynamic> alarmJson in decodedData.values) {
@@ -29,22 +31,25 @@ class CourseProvider extends ChangeNotifier {
     //     break;
     //   }
     // }
-    final prefs = await SharedPreferences.getInstance();
-    var jsonData =  await prefs.getString('courses');
+    final sharedPref = await SharedPreferences.getInstance();
+    var jsonData =  sharedPref.getString('courses');
     var json = jsonDecode(jsonData ?? "{}") as Map<String, dynamic>;
-    List<Course> prefsData = [];
+    List<Course> sharedPrefData = [];
 
     for (Map<String, dynamic> item in json.values) {
-      prefsData.add(Course.fromJSON(json: item));
+      sharedPrefData.add(Course.fromJSON(json: item));
     }
-    for (var item in prefsData) {
-      if (!courses.contains(item) || prefsData.length != courses.length) {
+    for (var item in sharedPrefData) {
+      if (!courses.contains(item) || sharedPrefData.length != courses.length) {
         courses.clear();
-        courses = prefsData;
+        courses = sharedPrefData;
         notifyListeners();
         break;
       }
     }
+    courses.forEach((item) => print(
+          item.grade,
+        ));
   }
 
   Future<void> updateCourse(Course course, int index) async {
@@ -60,11 +65,11 @@ class CourseProvider extends ChangeNotifier {
   }
 
   Future<void> updatePreferences() async {
-    final prefs = await SharedPreferences.getInstance();
+    final sharedPref = await SharedPreferences.getInstance();
     Map<String, dynamic> map = {};
     for (int i = 0; i < courses.length; i++) {
       map['$i'] = courses[i].courseToJSON();
     }
-    await prefs.setString('courses', jsonEncode(map));
+    await sharedPref.setString('courses', jsonEncode(map));
   }
 }
