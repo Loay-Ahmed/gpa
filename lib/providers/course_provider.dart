@@ -16,21 +16,6 @@ class CourseProvider extends ChangeNotifier {
   }
 
   Future<void> readCourses() async {
-    // final sharedPrefs = await SharedPreferences.getInstance();
-    // var data = await sharedPrefs.getString('alarms');
-    // var decodedData = jsonDecode(data ?? "{}") as Map<String, dynamic>;
-    // List<Alarm> alarmsPrefs = [];
-    // for (Map<String, dynamic> alarmJson in decodedData.values) {
-    //   alarmsPrefs.add(Alarm.fromJSON(alarmJson));
-    // }
-    // for (var item in alarms) {
-    //   if (!alarmsPrefs.contains(item)) {
-    //     alarms.clear();
-    //     alarms = alarmsPrefs;
-    //     notifyListeners();
-    //     break;
-    //   }
-    // }
     final sharedPref = await SharedPreferences.getInstance();
     var jsonData =  sharedPref.getString('courses');
     var json = jsonDecode(jsonData ?? "{}") as Map<String, dynamic>;
