@@ -22,19 +22,19 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
   final controller = TextEditingController();
 
   // The list and the option chosen for the grade drop down
-  Map<String, Grade> grades = {
-    "A+": Grade.Ap,
-    "A": Grade.A,
-    "B+": Grade.Bp,
-    "B": Grade.B,
-    "C+": Grade.Cp,
-    "C": Grade.C,
-    "D+": Grade.Dp,
-    "D": Grade.D,
-    "F": Grade.F,
-    "" : Grade.notSelected,
-  };
-  String? selectedGrade = "F";
+  List<Grade> grades = [
+    Grade.Ap,
+    Grade.A,
+    Grade.Bp,
+    Grade.B,
+    Grade.Cp,
+    Grade.C,
+    Grade.Dp,
+    Grade.D,
+    Grade.F,
+    Grade.notSelected,
+  ];
+  String? selectedGrade = "";
 
   // The list and the option chosen for the hours drop down
   List<int> hours = [0, 1, 2, 3];
@@ -122,30 +122,26 @@ class _CourseOptionsCardState extends State<CourseOptionsCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 DropdownButton<String>(
-                  value: selectedGrade ?? "",
+                  value: selectedGrade ?? "Grade",
                   hint: const Text('Grade'),
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedGrade = newValue;
                       courseProvider.updateCourse(
                           Course(
-                            grade: grades[selectedGrade ?? ""] ?? Grade.notSelected,
+                            grade: fromNameToGrade(selectedGrade ?? "") ??
+                                Grade.notSelected,
                             hours: widget.courseData?.hours ?? 0,
                           ),
                           widget.index);
                     });
                   },
-                  items: [
-                    DropdownMenuItem(
-                        value: grades.keys.toList()[0],
-                        child: Text(grades.keys.toList()[0])),
-                    DropdownMenuItem(
-                        value: grades.keys.toList()[1],
-                        child: Text(grades.keys.toList()[1])),
-                    DropdownMenuItem(
-                        value: grades.keys.toList()[2],
-                        child: Text(grades.keys.toList()[2])),
-                  ],
+                  items: grades.map<DropdownMenuItem<String>>((Grade value) {
+                    return DropdownMenuItem<String>(
+                      value: value.name,
+                      child: Text(value.name),
+                    );
+                  }).toList(),
                 ),
                 DropdownButton<String>(
                   value: selectedHours,
